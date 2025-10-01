@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Fehlerfabrik</title>
+</head>
+
+<body>
+    <div id="container"></div>
+    <script>
+
+
+
+
+        // Einstellungen:
+        const teddy_groesse_px = 400            // Größe des Teddy-Bildes in Pixeln
+        const teddy_sekunden_bis_aufrueck = 1   // Zeitlicher Abstand in Sekunden, in dem jeder Teddy einen Platz aufrückt
+
+        // Animationseinstellungen
+        const geschmeidigkeit = 0.8             // Wie glatt oder ruckelig die Animation ist, 
+        // 0 ist teleportation, 1 ist eine durchgehende, geschmeidige Bewegung
+        const easing = "ease"                   // Animationskurve der Teddy-Position: 
+        // Optionen sind:
+        // "linear" (damit und ruckelig=1 wird es perfekt gleitend) 
+        // "ease" (besser für ruckeligere Einstellungen)
+
+
+        // Bild-Dateien
+        const anzahl = 50                       // Anzahl der Bilddateien im Ordner "zufall". Das hier sollte eine Ganzzahl, keine Kommazahl sein.
+        // Die Bilder heißen "0.jpg", "1.jpg", "2.jpg", ... , "10.jpg" usw. (ohne extra Nullen vorne dran, also nicht "05.jpg"!)
+        // Aus diesen Bildern wird zufällig ausgewählt
+
+
+
+        // Ab hier kommt mein Code, bitte nichts ändern
+        let images = []
+
+        function create_image(src) {
+            let img = document.createElement("img");
+            img.src = src;
+            img.style = "width:" + teddy_groesse_px + "px; height: " + teddy_groesse_px + "px; transition: all " + teddy_sekunden_bis_aufrueck * geschmeidigkeit + "s " + easing + " 0s;"
+            img.classList.add("teddy")
+            document.getElementById("container").appendChild(img);
+            images.push({
+                img: img,
+                x: 0.
+            })
+        }
+        function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // keypress store
+        keypressed = false
+        document.onkeypress = function (e) {
+            e = e || window.event;
+            keypressed = true;
+            console.log("Fehler erzeugt")
+        };
+
+        // creation  & deletion
+        setInterval(() => {
+            // add standard or random teddy depending on  key press
+            if (keypressed) {
+                create_image("./zufall/" + getRandomInt(0, anzahl) + ".jpg")
+                keypressed = false
+            } else {
+                create_image("./master.jpg")
+            }
+
+            // filter out out-of-bound images
+            images = images.filter(im => {
+                if (im.x > window.innerWidth * 2 + teddy_groesse_px * 2) { // keep generous bound to account for resizing
+                    im.img.remove();
+                    return false;
+                }
+                return true;
+            });
+
+        }, teddy_sekunden_bis_aufrueck * 1000)
+
+        // move loop, offset to creation & deletion by half a cycle
+        setTimeout(() => {
+            setInterval(() => {
+                // move teddies
+                for (im of images) {
+                    im.x += teddy_groesse_px;
+                    im.img.style.left = im.x + "px"
+                }
+            }, teddy_sekunden_bis_aufrueck * 1000) // timing interval
+        }, teddy_sekunden_bis_aufrueck * 1000 * 0.5 // timing offset
+        )
+
+
+
+    </script>
+    <style>
+        html * {
+            cursor: none !important
+        }
+
+        html {
+            background: black;
+        }
+
+        .teddy {
+            position: fixed;
+            bottom: 0px;
+            left: 0px;
+            transform: translateX(-100%);
+        }
+    </style>
+</body>
+
+</html>
