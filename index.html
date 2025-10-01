@@ -12,9 +12,6 @@
     <div id="container"></div>
     <script>
 
-
-
-
         // Einstellungen:
         const teddy_groesse_px = 400            // Größe des Teddy-Bildes in Pixeln
         const teddy_sekunden_bis_aufrueck = 1   // Zeitlicher Abstand in Sekunden, in dem jeder Teddy einen Platz aufrückt
@@ -55,9 +52,9 @@
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
-        // keypress store
+        // keydown store
         keypressed = false
-        document.onkeypress = function (e) {
+        document.onkeydown = function (e) {
             e = e || window.event;
             keypressed = true;
             console.log("Fehler erzeugt")
