@@ -40,6 +40,7 @@
             img.src = src;
             img.style = "width:" + teddy_groesse_px + "px; height: " + teddy_groesse_px + "px; transition: all " + teddy_sekunden_bis_aufrueck * geschmeidigkeit + "s " + easing + " 0s;"
             img.classList.add("teddy")
+            img.style.zIndex = "1"
             document.getElementById("container").appendChild(img);
             images.push({
                 img: img,
@@ -73,25 +74,23 @@
             // filter out out-of-bound images
             images = images.filter(im => {
                 if (im.x > window.innerWidth * 2 + teddy_groesse_px * 2) { // keep generous bound to account for resizing
+                    im.img.zIndex = "-1"
                     im.img.remove();
                     return false;
                 }
                 return true;
             });
 
-        }, teddy_sekunden_bis_aufrueck * 1000)
-
-        // move loop, offset to creation & deletion by half a cycle
-        setTimeout(() => {
-            setInterval(() => {
-                // move teddies
+            // move images 
+            setTimeout(() => {
                 for (im of images) {
                     im.x += teddy_groesse_px;
+                    im.img.style.zIndex = "2"
                     im.img.style.left = im.x + "px"
                 }
-            }, teddy_sekunden_bis_aufrueck * 1000) // timing interval
-        }, teddy_sekunden_bis_aufrueck * 1000 * 0.5 // timing offset
-        )
+            }, teddy_sekunden_bis_aufrueck * 1000 * 0.5)
+
+        }, teddy_sekunden_bis_aufrueck * 1000)
 
 
 
@@ -110,6 +109,7 @@
             bottom: 0px;
             left: 0px;
             transform: translateX(-100%);
+            z-index: 1;
         }
     </style>
 </body>
